@@ -1,4 +1,4 @@
-"""TasksManager URL Configuration
+"""CHRDITools URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.1/topics/http/urls/
@@ -15,11 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from TasksManager.settings import SITE_NAME
+from CHRDITools.settings import SITE_NAME
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.tasks.urls', namespace='tasks')),
+    path('risk/', include('apps.risks.urls', namespace='risks')),
 ]
 
 admin.site.site_header = SITE_NAME

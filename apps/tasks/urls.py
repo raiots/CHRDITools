@@ -1,7 +1,7 @@
 from django.urls import path, include
 # import debug_toolbar
 from apps.tasks import views, tests
-from TasksManager import settings
+from CHRDITools import settings
 
 app_name = 'tasks'
 urlpatterns = [
