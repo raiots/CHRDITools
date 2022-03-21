@@ -361,7 +361,12 @@ class IndexView(View):
 
 class TodoListView(View):
     @method_decorator(login_required)
-    def get(self, request, year=timezone.now().year, month=timezone.now().month):
+    def get(self, request, year=None, month=None):
+        if year is None:
+            year = timezone.now().year
+        if month is None:
+            month = timezone.now().month
+
         my_todo = Todo.objects.filter(main_executor=request.user, deadline__year=year, deadline__month=month)
         my_sub_todo = Todo.objects.filter(sub_executor=request.user, deadline__year=year, deadline__month=month)
         date = str(year) + '年' + str(month) + '月'
@@ -371,7 +376,12 @@ class TodoListView(View):
 
 class GroupTodoList(View):
     @method_decorator(login_required)
-    def get(self, request, year=timezone.now().year, month=timezone.now().month):
+    def get(self, request, year=None, month=None):
+        if year is None:
+            year = timezone.now().year
+        if month is None:
+            month = timezone.now().month
+
         group_todo = Todo.objects.filter(main_executor__department=request.user.department, deadline__year=year,
                                          deadline__month=month).order_by('related_task_id', 'deadline')
         date = str(year) + '年' + str(month) + '月'
@@ -381,7 +391,9 @@ class GroupTodoList(View):
 
 class TaskListView(View):
     @method_decorator(login_required)
-    def get(self, request, year=timezone.now().year): # TODO 把timezone.now().year写在后面要用year替换的地方是否可以解决
+    def get(self, request, year=None): # TODO 把timezone.now().year写在后面要用year替换的地方是否可以解决
+        if year is None:
+            year = timezone.now().year
         tasks = Task.objects.filter(department=request.user.department, deadline__year=year).order_by('task_id')\
                  | Task.objects.filter(department=request.user.department, related_task__deadline__year=year).order_by('task_id')
         tasks = tasks.distinct()
