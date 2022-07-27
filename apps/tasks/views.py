@@ -447,6 +447,9 @@ class TodoEntryView(View):
         todo_detail = Todo.objects.get(id=pk)
         form = TodoForm(instance=todo_detail, data=request.POST)
         if form.is_valid():
+            # print(form.cleaned_data.get('is_archived'))
+            # if form.cleaned_data.get('is_archived') is True:
+            #     form.cleaned_data.pop('maturity') = '100%'
             form.save()
             return redirect('tasks:todolist')
             # return redirect('tasks:todo_detail', pk=pk)

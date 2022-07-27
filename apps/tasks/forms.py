@@ -25,7 +25,8 @@ class TodoForm(forms.ModelForm):
 
     class Meta:
         model = Todo
-        fields = ['maturity', 'real_work', 'sub_executor', 'evaluate_factor', 'complete_note', 'is_archived', 'attachment']
+        fields = ['maturity', 'real_work', 'sub_executor', 'evaluate_factor', 'complete_note', 'is_archived',
+                  'attachment']
         widgets = {'complete_note': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
                    # 'evaluate_factor': forms.NumberInput(attrs={'class': 'form-control'}),
                    }
@@ -45,3 +46,9 @@ class TodoForm(forms.ModelForm):
         else:
             self.fields['maturity'].choices = [('0%', '0%'), ('10%', '10%'), ('50%', '50%'), ('90%', '90%'),
                                                ('100%', '100%')]
+
+    def clean(self):
+        # 利用clean方法，数据存储前检查是否已归档，若归档则将成熟度设置为100%
+        if self.cleaned_data['is_archived']:
+            self.cleaned_data['maturity'] = '100%'
+        return self.cleaned_data
