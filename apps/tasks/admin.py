@@ -137,7 +137,7 @@ class TodoAdmin(ImportExportModelAdmin):
     fieldsets = [
         (None, {
             'fields': [
-                'related_task', 'todo_topic', 'todo_note', 'deadline', 'duty_group', 'main_executor', 'sub_executor',
+                'related_task', 'todo_topic', 'todo_note', 'need_archive', 'deadline', 'duty_group', 'main_executor', 'sub_executor',
                 'sub_executor_count', 'predict_work', 'evaluate_factor', 'real_work'
             ],
             'description': ''

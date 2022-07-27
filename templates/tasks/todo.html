@@ -60,6 +60,16 @@
                   <dd class="col-sm-8">{{ todo_detail.real_work }}</dd>
                   <dt class="col-sm-4">成熟度</dt>
                   <dd class="col-sm-8">{{ todo_detail.maturity }}</dd>
+                  <dt class="col-sm-4">归档情况</dt>
+                  <dd class="col-sm-8">
+                    {% if todo_detail.is_archived == 1 %}
+                      <span class="badge bg-gradient-blue">已归档</span>
+                    {% elif todo_detail.is_archived == 0 and todo_detail.need_archive == 1  %}
+                      <span class="badge bg-gradient-red">未归档</span>
+                    {% else %}
+                      <span class="badge bg-gradient-gray">无需归档</span>
+                    {% endif %}
+                  </dd>
                 </dl>
               </div>
               <!-- /.card-body -->
@@ -80,6 +90,7 @@
                     <div class="col-sm-6">
                       <div class="form-group">
                         <label for="exampleInputEmail1">成熟度</label>
+                          <small>如需要归档但未存档，成熟度最高90%，等待归档管理员确认归档，才可调至100%</small>
                         {{ form.maturity }}
                       </div>
                     </div>
@@ -108,6 +119,17 @@
                     <label for="exampleInputPassword1">完成情况说明</label>
                     {{ form.complete_note }}
                   </div>
+                  <div class="form-group">
+                    <label for="exampleInputFile">附件</label>
+                    {{ form.attachments }}
+                  </div>
+                  {% if perms.tasks.change_archive %}
+                    <div class="form-group">
+                      <label for="exampleInputPassword1">归档情况(请勾选)</label>
+                      {{ form.is_archived }}
+                    </div>
+                  {% endif %}
+
                 </div>
                 <!-- /.card-body -->
 

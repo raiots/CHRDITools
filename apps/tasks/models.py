@@ -41,6 +41,8 @@ class Todo(models.Model):
     )
     real_work = models.DecimalField('实际工作量', default=0, max_digits=5, decimal_places=1, blank=False)
     complete_note = models.TextField('完成情况说明', max_length=500, blank=True)
+    need_archive = models.BooleanField(verbose_name='是否需要归档', default=True)
+    is_archived = models.BooleanField(verbose_name='是否已归档', default=False)
     quality_mark = models.ForeignKey('users.QualityMark', on_delete=models.SET_NULL, blank=True, null=True,
                                      verbose_name='质量评价')
     attachment = models.FileField('交付物查看', blank=True)
@@ -54,6 +56,9 @@ class Todo(models.Model):
         ordering = ['deadline']
         verbose_name = '工作包'
         verbose_name_plural = '工作包'
+        permissions = [
+            ('change_archive', '可以修改归档状态'),
+        ]
 
     # def save(self, *args, **kwargs):
     #     super(Todo, self).save(*args, **kwargs)

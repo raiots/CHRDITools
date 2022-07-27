@@ -37,7 +37,7 @@ class IndexView(View):
             month = timezone.now().month
 
         # 建立username和真实姓名的对应字典，并在工作量计算完成后插入结果集
-        user_info = User.objects.filter(department=request.user.department)\
+        user_info = User.objects.filter(department=request.user.department) \
             .values_list('username', 'real_name')
         user_name = {}
         for user in user_info:
@@ -46,9 +46,9 @@ class IndexView(View):
 
         # 以用户表查询，按用户列出所参与承办、协办任务，并在之后按用户名分组合并。
         main_credit = User.objects.filter(department=request.user.department,
-                                          main_executor__deadline__year=year, main_executor__deadline__month=month)\
-            .annotate(main_count=Count('main_executor'))\
-            .order_by('username')\
+                                          main_executor__deadline__year=year, main_executor__deadline__month=month) \
+            .annotate(main_count=Count('main_executor')) \
+            .order_by('username') \
             .values('username', 'main_executor', 'main_executor__predict_work', 'main_executor__real_work',
                     'main_executor__evaluate_factor', 'main_count')  # 这里的annotate不知会不会有问题
 
@@ -80,8 +80,10 @@ class IndexView(View):
         for i in sub_credit:
             sub_todo_id = i['sub_executor']
             i['sub_exe_count'] = sub_exe_count[sub_todo_id]
-            i['sub_pre_cal'] = i['sub_executor__predict_work'] * (1 - i['sub_executor__evaluate_factor']) / i['sub_exe_count']
-            i['sub_real_cal'] = i['sub_executor__real_work'] * (1 - i['sub_executor__evaluate_factor']) / i['sub_exe_count']
+            i['sub_pre_cal'] = i['sub_executor__predict_work'] * (1 - i['sub_executor__evaluate_factor']) / i[
+                'sub_exe_count']
+            i['sub_real_cal'] = i['sub_executor__real_work'] * (1 - i['sub_executor__evaluate_factor']) / i[
+                'sub_exe_count']
             i['sub_count'] = 1  # 用于帮助累加程序计算每个用户的协办任务数量， sub_exe_count会返回此协办任务的协办人数，在累加时导致计算错误
             # print(i)
             # print(str(i['sub_executor']))
@@ -94,6 +96,7 @@ class IndexView(View):
                 vals = {k: item[k] for k in sum_value_keys}
                 dic[key].update(vals)
             return dic
+
         main_credit = solve(main_credit, 'username', ['main_pre_cal', 'main_real_cal', 'main_count'])
         main_credit = dict(main_credit)
         sub_credit = solve(sub_credit, 'username', ['sub_pre_cal', 'sub_real_cal', 'sub_count'])
@@ -150,7 +153,6 @@ class IndexView(View):
         else:
             department_cal, current_user = {}, {}
 
-
         # 计算实际工作量、完成质量
         def cal_method(main_list, sub_list, user_name):
             # print(main_list, sub_list, user_name)
@@ -179,7 +181,6 @@ class IndexView(View):
                     quality_dict[i['username']] = []
                     if i['sub_executor__quality_mark__mark_value__mark_value'] != None:
                         quality_dict[i['username']].append(i['sub_executor__quality_mark__mark_value__mark_value'])
-
 
                 for key, value in quality_dict.items():
                     if value:
@@ -236,6 +237,7 @@ class IndexView(View):
                     dd[key].append(value)
             # print(dd)
             return dd
+
         user_info = User.objects.filter(department=request.user.department) \
             .values_list('username', 'real_name')
         user_name = {}
@@ -251,7 +253,9 @@ class IndexView(View):
             .annotate(main_count=Count('main_executor')) \
             .order_by('username') \
             .values('username', 'main_executor', 'main_executor__predict_work', 'main_executor__real_work',
-                    'main_executor__evaluate_factor', 'main_executor__maturity', 'main_executor__quality_mark__mark_value__mark_value', 'main_executor__deadline', 'main_count')  # 这里的annotate不知会不会有问题
+                    'main_executor__evaluate_factor', 'main_executor__maturity',
+                    'main_executor__quality_mark__mark_value__mark_value', 'main_executor__deadline',
+                    'main_count')  # 这里的annotate不知会不会有问题
 
         sub_count = Todo.objects.filter(sub_executor__department=request.user.department,
                                         deadline__year=year) \
@@ -260,7 +264,8 @@ class IndexView(View):
                                          sub_executor__deadline__year=year) \
             .order_by('username') \
             .values('username', 'real_name', 'sub_executor', 'sub_executor__predict_work', 'sub_executor__real_work',
-                    'sub_executor__evaluate_factor', 'sub_executor__maturity', 'sub_executor__quality_mark__mark_value__mark_value', 'sub_executor__deadline')
+                    'sub_executor__evaluate_factor', 'sub_executor__maturity',
+                    'sub_executor__quality_mark__mark_value__mark_value', 'sub_executor__deadline')
 
         # 构建工作包id对应协办人人数的字典
         sub_exe_count = {}
@@ -281,8 +286,10 @@ class IndexView(View):
             except:
                 i['main_executor__maturity'] = decimal.Decimal(float(0) / 100)
             # print(i['main_executor__maturity'])
-            i['main_pre_cal'] = i['main_executor__predict_work'] * i['main_executor__evaluate_factor'] * i['main_executor__maturity']
-            i['main_real_cal'] = i['main_executor__real_work'] * i['main_executor__evaluate_factor'] * i['main_executor__maturity']
+            i['main_pre_cal'] = i['main_executor__predict_work'] * i['main_executor__evaluate_factor'] * i[
+                'main_executor__maturity']
+            i['main_real_cal'] = i['main_executor__real_work'] * i['main_executor__evaluate_factor'] * i[
+                'main_executor__maturity']
             # print(i)
             # print(str(i['sub_executor']))
 
@@ -294,13 +301,13 @@ class IndexView(View):
                 i['sub_executor__maturity'] = decimal.Decimal(float(i['sub_executor__maturity'].strip('%')) / 100)
             except:
                 i['sub_executor__maturity'] = decimal.Decimal(float(0) / 100)
-            i['sub_pre_cal'] = i['sub_executor__predict_work'] * (1 - i['sub_executor__evaluate_factor']) / i['sub_exe_count'] * i['sub_executor__maturity']
-            i['sub_real_cal'] = i['sub_executor__real_work'] * (1 - i['sub_executor__evaluate_factor']) / i['sub_exe_count'] * i['sub_executor__maturity']
+            i['sub_pre_cal'] = i['sub_executor__predict_work'] * (1 - i['sub_executor__evaluate_factor']) / i[
+                'sub_exe_count'] * i['sub_executor__maturity']
+            i['sub_real_cal'] = i['sub_executor__real_work'] * (1 - i['sub_executor__evaluate_factor']) / i[
+                'sub_exe_count'] * i['sub_executor__maturity']
             i['sub_count'] = 1  # 用于帮助累加程序计算每个用户的协办任务数量， sub_exe_count会返回此协办任务的协办人数，在累加时导致计算错误
             # print(i)
             # print(str(i['sub_executor']))
-
-
 
         main_Q1st, main_Q2nd, main_Q3th, main_Q4th = [], [], [], []
         for i in main_credit:
@@ -347,9 +354,6 @@ class IndexView(View):
 
         # return HttpResponse(result.items())
 
-
-
-
         # 为页面提供日期信息
         date = str(year) + '年' + str(month) + '月'
 
@@ -391,11 +395,12 @@ class GroupTodoList(View):
 
 class TaskListView(View):
     @method_decorator(login_required)
-    def get(self, request, year=None): # TODO 把timezone.now().year写在后面要用year替换的地方是否可以解决
+    def get(self, request, year=None):  # TODO 把timezone.now().year写在后面要用year替换的地方是否可以解决
         if year is None:
             year = timezone.now().year
-        tasks = Task.objects.filter(department=request.user.department, deadline__year=year).order_by('task_id')\
-                 | Task.objects.filter(department=request.user.department, related_task__deadline__year=year).order_by('task_id')
+        tasks = Task.objects.filter(department=request.user.department, deadline__year=year).order_by('task_id') \
+                | Task.objects.filter(department=request.user.department, related_task__deadline__year=year).order_by(
+            'task_id')
         tasks = tasks.distinct()
         # tasks = Task.objects.filter(Q(department=request.user.department), Q(deadline__year=year) | Q(related_task__deadline__year=year)).order_by('task_id')
         # 使用‘或’，找出工作包/年度任务的截止日期在今年的年度任务。后面还要做一个筛选，以达到只显示本年度的工作包
@@ -430,7 +435,11 @@ class UserLogoutView(View):
 class TodoEntryView(View):
     def get(self, request, pk):
         todo_detail = Todo.objects.get(id=pk)
-        form = TodoForm(instance=todo_detail)
+        if todo_detail.need_archive is True and todo_detail.is_archived is False:
+            # 如果需要归档，并且没有归档，则创建成熟度不满的表单
+            form = TodoForm(instance=todo_detail, need_archive=True)
+        else:
+            form = TodoForm(instance=todo_detail, need_archive=False)
         context = {'todo_detail': todo_detail, 'form': form}
         return render(request, 'tasks/todo.html', context)
 
