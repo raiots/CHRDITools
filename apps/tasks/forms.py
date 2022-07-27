@@ -35,7 +35,7 @@ class TodoForm(forms.ModelForm):
         need_archive = kwargs.pop('need_archive', None)  # 捕获传入的need_archive参数(是否需要归档),给默认值，避免无法提交
         super(TodoForm, self).__init__(*args, **kwargs)
         # self.fields['sub_executor'].widget.attrs['class'] = 'form-control'
-        fields = ['maturity', 'real_work', 'sub_executor', 'evaluate_factor', 'complete_note', 'is_archived']
+        fields = ['maturity', 'real_work', 'sub_executor', 'evaluate_factor', 'complete_note', 'is_archived', 'attachment']
         for i in fields:
             self.fields[i].widget.attrs['class'] = 'form-control'
 

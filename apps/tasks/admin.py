@@ -138,7 +138,7 @@ class TodoAdmin(ImportExportModelAdmin):
         (None, {
             'fields': [
                 'related_task', 'todo_topic', 'todo_note', 'need_archive', 'deadline', 'duty_group', 'main_executor', 'sub_executor',
-                'sub_executor_count', 'predict_work', 'evaluate_factor', 'real_work'
+                'sub_executor_count', 'predict_work', 'evaluate_factor', 'real_work', 'attachment'
             ],
             'description': ''
         }),

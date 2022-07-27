@@ -128,6 +128,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 #STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 # 登录链接与登录后跳转路径

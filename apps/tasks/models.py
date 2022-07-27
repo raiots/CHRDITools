@@ -45,7 +45,7 @@ class Todo(models.Model):
     is_archived = models.BooleanField(verbose_name='是否已归档', default=False)
     quality_mark = models.ForeignKey('users.QualityMark', on_delete=models.SET_NULL, blank=True, null=True,
                                      verbose_name='质量评价')
-    attachment = models.FileField('交付物查看', blank=True)
+    attachment = models.FileField('交付物查看', blank=True, upload_to='media/todo/%Y/%m/%d')
 
     def __str__(self):
         date = str(self.deadline)
@@ -113,7 +113,7 @@ class Task(models.Model):
         verbose_name='任务名称',
         max_length=50
     )
-    task_id = models.CharField(max_length=50, unique=True, verbose_name='编号')
+    task_id = models.CharField(max_length=50, unique=False, verbose_name='编号')
     task_note = models.CharField(
         verbose_name='任务说明',
         max_length=100,
