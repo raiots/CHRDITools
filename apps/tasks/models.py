@@ -1,3 +1,4 @@
+import os
 import time
 
 from django.db import models
@@ -23,7 +24,8 @@ class Todo(models.Model):
                                       verbose_name='承/督办人', blank=True, null=True)
     sub_executor = models.ManyToManyField(User, related_name='sub_executor', verbose_name='协办人', blank=True)
     sub_executor_count = models.CharField('协办人数', max_length=32)
-    related_task = models.ForeignKey('Task', related_name='related_task', on_delete=models.CASCADE, verbose_name='年度任务')
+    related_task = models.ForeignKey('Task', related_name='related_task', on_delete=models.CASCADE,
+                                     verbose_name='年度任务')
     predict_work = models.DecimalField('预计工作量', default=0, max_digits=5, decimal_places=1, blank=False)
     evaluate_factor = models.DecimalField('折算系数', max_digits=5, decimal_places=1, blank=True, default='1')
     maturity = models.CharField(
@@ -45,7 +47,8 @@ class Todo(models.Model):
     is_archived = models.BooleanField(verbose_name='是否已归档', default=False)
     quality_mark = models.ForeignKey('users.QualityMark', on_delete=models.SET_NULL, blank=True, null=True,
                                      verbose_name='质量评价')
-    attachment = models.FileField('交付物查看', blank=True, upload_to='media/todo/%Y/%m/%d')
+
+    # attachment = models.FileField('交付物查看', blank=True, upload_to='media/todo/%Y/%m/%d')
 
     def __str__(self):
         date = str(self.deadline)
@@ -97,7 +100,7 @@ class Todo(models.Model):
 
     @property
     def sub_workload(self):
-        return self.predict_work * (1-int(self.evaluate_factor))/self.sub_executor.count
+        return self.predict_work * (1 - int(self.evaluate_factor)) / self.sub_executor.count
 
     @classmethod
     def sub_member(cls):
@@ -105,7 +108,33 @@ class Todo(models.Model):
 
     def list_sub_executor(self):
         return ', '.join([a.real_name for a in self.sub_executor.all()])
+
     list_sub_executor.short_description = '协办人'
+
+
+def make_todo_attachment_path(instance, filename):
+    task_id = instance.todo.related_task_id
+    todo_id = instance.todo.id
+    path = f'Todo_Attachments/task_{task_id}/todo_{todo_id}/{filename}'
+    return path
+
+
+class Attachment(models.Model):
+    todo = models.ForeignKey(Todo, on_delete=models.CASCADE, verbose_name='工作包')
+    confidential_level = models.CharField(choices=(('内部', '内部'), ('非涉密', '非涉密')), max_length=10,
+                                          verbose_name='密级')
+    attachment = models.FileField('附件', upload_to=make_todo_attachment_path)
+    upload_time = models.DateTimeField(auto_now_add=True, verbose_name='上传时间')
+
+    def __str__(self):
+        return self.attachment.name
+
+    def filename(self):
+        return os.path.basename(self.attachment.name)
+
+    class Meta:
+        verbose_name = '附件'
+        verbose_name_plural = '附件'
 
 
 class Task(models.Model):
@@ -125,8 +154,11 @@ class Task(models.Model):
                                    null=True, verbose_name='所属单位')
     duty_group = models.ForeignKey('users.Department', related_name='duty_group', on_delete=models.SET_NULL, blank=True,
                                    null=True, verbose_name='责任单位')
-    principal = models.ForeignKey(User, related_name='principal', verbose_name='负责人', on_delete=models.CASCADE, blank=True, null=True)
-    leader = models.ForeignKey(User, related_name='leader', verbose_name='主管领导', on_delete=models.CASCADE, blank=True, null=True)
+    principal = models.ForeignKey(User, related_name='principal', verbose_name='负责人', on_delete=models.CASCADE,
+                                  blank=True, null=True)
+    leader = models.ForeignKey(User, related_name='leader', verbose_name='主管领导', on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
     aim_value = models.CharField(max_length=50, verbose_name='目标值', blank=True)
     # start_date = models.DateField(verbose_name='起始日期')
     deadline = models.DateField(verbose_name='完成时间')

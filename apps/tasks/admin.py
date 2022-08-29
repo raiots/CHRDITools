@@ -31,6 +31,24 @@ class TodoInline(admin.StackedInline):
     # classes = ['collapse']
 #TODO 选择年度任务时排序 https://www.codenong.com/40740869/
 
+class AttachmentInline(admin.TabularInline):
+    model = models.Attachment
+    extra = 0
+    classes = ['expand']
+    readonly_fields = ['upload_time']
+    fields = ['attachment', 'confidential_level', 'upload_time']
+    def file_name(self, obj):
+        return obj.file.name
+    def file_size(self, obj):
+        return obj.file.size
+    def file_type(self, obj):
+        return obj.file.content_type
+    def file_url(self, obj):
+        return format_html('<a href="{}">{}</a>', obj.file.url, obj.file.name)
+    file_url.short_description = '附件'
+    file_url.allow_tags = True
+    file_url.admin_order_field = 'file'
+
 
 class TaskAdmin(ImportExportModelAdmin):
     resource_class = TaskResources
@@ -138,7 +156,7 @@ class TodoAdmin(ImportExportModelAdmin):
         (None, {
             'fields': [
                 'related_task', 'todo_topic', 'todo_note', 'need_archive', 'deadline', 'duty_group', 'main_executor', 'sub_executor',
-                'sub_executor_count', 'predict_work', 'evaluate_factor', 'real_work', 'attachment'
+                'sub_executor_count', 'predict_work', 'evaluate_factor', 'real_work'
             ],
             'description': ''
         }),
@@ -173,7 +191,7 @@ class TodoAdmin(ImportExportModelAdmin):
     # raw_id_fields = ("sub_executor",)
     search_fields = ('todo_topic',)
     ordering = ('related_task', )
-    readonly_fields = ["attachment"]
+    inlines = [AttachmentInline]
 
     def approval_state(self, obj):
         return format_html('<span style="color:{};">{}</span>', 'green', obj.approval)

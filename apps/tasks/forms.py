@@ -1,5 +1,6 @@
 from django import forms
 from .models import Todo
+from multiupload.fields import MultiFileField, MultiMediaField, MultiImageField
 
 
 class LoginForm(forms.Form):
@@ -25,8 +26,7 @@ class TodoForm(forms.ModelForm):
 
     class Meta:
         model = Todo
-        fields = ['maturity', 'real_work', 'sub_executor', 'evaluate_factor', 'complete_note', 'is_archived',
-                  'attachment']
+        fields = ['maturity', 'real_work', 'sub_executor', 'evaluate_factor', 'complete_note', 'is_archived']
         widgets = {'complete_note': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
                    # 'evaluate_factor': forms.NumberInput(attrs={'class': 'form-control'}),
                    }
@@ -35,7 +35,7 @@ class TodoForm(forms.ModelForm):
         need_archive = kwargs.pop('need_archive', None)  # 捕获传入的need_archive参数(是否需要归档),给默认值，避免无法提交
         super(TodoForm, self).__init__(*args, **kwargs)
         # self.fields['sub_executor'].widget.attrs['class'] = 'form-control'
-        fields = ['maturity', 'real_work', 'sub_executor', 'evaluate_factor', 'complete_note', 'is_archived', 'attachment']
+        fields = ['maturity', 'real_work', 'sub_executor', 'evaluate_factor', 'complete_note', 'is_archived']
         for i in fields:
             self.fields[i].widget.attrs['class'] = 'form-control'
 
@@ -52,3 +52,9 @@ class TodoForm(forms.ModelForm):
         if self.cleaned_data['is_archived']:
             self.cleaned_data['maturity'] = '100%'
         return self.cleaned_data
+
+
+class FileFieldForm(forms.Form):
+    # file_field = forms.FileField(label='multi', widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    attachments = MultiFileField(min_num=1, max_num=3, max_file_size=1024*1024*50)
+    confidential_level = forms.CharField(widget=forms.Select(choices=(('内部', '内部'), ('非涉密', '非涉密'))))

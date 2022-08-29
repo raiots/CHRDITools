@@ -1,0 +1,62 @@
+{% extends 'tasks/base.html' %}
+
+
+{% block main_content %}
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">批量文件上传</h3>
+                    </div>
+
+
+                    <form  method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">文件密级</label>
+                                {{ form.confidential_level }}
+{#                                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">#}
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputFile">批量文件选择</label>
+                                <div class="input-group">
+                                    {{ form.attachments }}
+{#                                    <div class="custom-file">#}
+{#                                        <input type="file" class="custom-file-input" id="exampleInputFile">#}
+{#                                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>#}
+{#                                    </div>#}
+{#                                    <div class="input-group-append">#}
+{#                                        <span class="input-group-text">Upload</span>#}
+{#                                    </div>#}
+                                </div>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1">承诺上传文件与密级对应正确</label>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <input type="submit" class="btn btn-primary" value="批量上传"/>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{#    hello#}
+{#<form method="POST" enctype="multipart/form-data">#}
+{#     {% csrf_token %}#}
+{#    <label>{{form}}</label>#}
+{#    <input type="submit" class="btn btn-primary" value="批量上传"/>#}
+{#</form>#}
+{% endblock %}

@@ -121,7 +121,13 @@
                   </div>
                   <div class="form-group">
                     <label for="exampleInputFile">附件</label>
-                    {{ form.attachment }}
+                  </br>
+                      {% for attachment in todo_attachment %}
+                      <a href="/media/{{ attachment }}">{{ attachment.filename }}</a> {{ attachment.confidential_level }}</br>
+                      {% endfor %}
+                      <a href="/upload/?todo_id={{ todo_detail.id }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-upload"></i>
+                          上传新附件</a>
                   </div>
                   {% if perms.tasks.change_archive %}
                     <div class="form-group">

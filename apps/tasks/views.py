@@ -13,9 +13,11 @@ from django.utils.decorators import method_decorator
 import django.utils.timezone as timezone
 from django.views import View
 from django.db import connection
+from django.views.generic import FormView
+
 # Create your views here.
-from apps.tasks.models import Todo, Task
-from apps.tasks.forms import TodoForm
+from apps.tasks.models import Todo, Task, Attachment
+from apps.tasks.forms import TodoForm, FileFieldForm
 from apps.users.models import User
 from . import my_query
 from functools import reduce
@@ -432,15 +434,59 @@ class UserLogoutView(View):
         return redirect('tasks:index')
 
 
+# class FileUploadView(View):
+#     @method_decorator(login_required)
+#     def get(self, request):
+#         form = FileFieldForm()
+#         return render(request, 'tasks/file_upload.html', locals())
+#
+#     def post(self, request):
+#         form = FileFieldForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('tasks:index')
+#         return render(request, 'tasks/file_upload.html', locals())
+#
+#     @method_decorator(login_required)
+#     def post(self, request):
+#         file = request.FILES.get('file')
+#         if file:
+#             file_name = file.name
+#             file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+#             with open(file_path, 'wb') as f:
+#                 for chunk in file.chunks():
+#                     f.write(chunk)
+#             messages.success(request, '文件上传成功')
+#             return redirect('tasks:file_upload')
+#         else:
+#             messages.error(request, '文件上传失败')
+#             return redirect('tasks:file_upload')
+
+class FileUploadView(FormView):
+    template_name = 'tasks/file_upload.html'
+    form_class = FileFieldForm
+
+
+    def form_valid(self, form):
+        todo_id = self.request.GET.get("todo_id")
+        print(todo_id)
+        self.success_url = '/todo/' + todo_id
+        for each in form.cleaned_data['attachments']:
+            Attachment.objects.create(attachment=each, todo_id=todo_id,
+                                      confidential_level=form.cleaned_data['confidential_level'])
+        return super(FileUploadView, self).form_valid(form)
+
+
 class TodoEntryView(View):
     def get(self, request, pk):
         todo_detail = Todo.objects.get(id=pk)
+        todo_attachment = Attachment.objects.filter(todo_id=pk)
         if todo_detail.need_archive is True and todo_detail.is_archived is False:
             # 如果需要归档，并且没有归档，则创建成熟度不满的表单
             form = TodoForm(instance=todo_detail, need_archive=True)
         else:
             form = TodoForm(instance=todo_detail, need_archive=False)
-        context = {'todo_detail': todo_detail, 'form': form}
+        context = {'todo_detail': todo_detail, 'todo_attachment': todo_attachment, 'form': form}
         return render(request, 'tasks/todo.html', context)
 
     def post(self, request, pk):
