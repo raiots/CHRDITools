@@ -26,7 +26,7 @@ class TodoForm(forms.ModelForm):
 
     class Meta:
         model = Todo
-        fields = ['maturity', 'real_work', 'sub_executor', 'evaluate_factor', 'complete_note', 'is_archived']
+        fields = ['maturity', 'real_work', 'sub_executor', 'evaluate_factor', 'complete_note', 'is_archived', 'quality_mark']
         widgets = {'complete_note': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
                    # 'evaluate_factor': forms.NumberInput(attrs={'class': 'form-control'}),
                    }

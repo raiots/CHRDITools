@@ -119,11 +119,24 @@
                     <label for="exampleInputPassword1">完成情况说明</label>
                     {{ form.complete_note }}
                   </div>
+
+{#                仅领导能操作#}
+                {% if perms.tasks.can_mark %}
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">工作质量评价</label>
+                    {{ form.quality_mark }}
+                  </div>
+                {% endif %}
+
                   <div class="form-group">
                     <label for="exampleInputFile">附件</label>
                   </br>
                       {% for attachment in todo_attachment %}
-                      <a href="/media/{{ attachment }}">{{ attachment.filename }}</a> {{ attachment.confidential_level }}</br>
+                      <a href="/media/{{ attachment }}">{{ attachment.filename }}</a> ({{ attachment.confidential_level }})
+                            <span class="badge bg-gradient-red">
+                                <a style="color:#FFFFFF;" href="{% url 'tasks:todo_attachment_delete' del_attachment_id=attachment.del_id %}">删除</a>
+                            </span>
+                          </br>
                       {% endfor %}
                       <a href="/upload/?todo_id={{ todo_detail.id }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-upload"></i>
@@ -131,7 +144,7 @@
                   </div>
                   {% if perms.tasks.change_archive %}
                     <div class="form-group">
-                      <label for="exampleInputPassword1">归档情况(请勾选)</label>
+                      <label for="exampleInputPassword1">同意归档(请勾选)</label>
                       {{ form.is_archived }}
                     </div>
                   {% endif %}

@@ -100,15 +100,24 @@
                         </td>
                         <td style="text-align:center;">
                           {% if todo.is_archived == 1 %}
-                            <span class="badge bg-gradient-blue">已归档</span>
-                          {% elif todo.is_archived == 0 and todo.need_archive == 1  %}
+                            <span class="badge bg-gradient-green">
+                                <a style="color:#FFFFFF;" href="#" onclick="window.open('{% url 'tasks:todo_attachment' pk=todo.id %}', 'name','width=350, height=200, location=nosimply ')">已归档</a>
+{#                                <a style="color:#FFFFFF;" href="{% url 'tasks:todo_attachment' pk=todo.id %}">已归档</a>_#}
+                                <i class="fa fa-paperclip" aria-hidden="true"></i>
+                            </span>
+                          {% elif todo.is_archived == 0 and todo.need_archive == 1 and todo.have_attachment == 0 %}
                             <span class="badge bg-gradient-red">未归档</span>
+                          {% elif todo.is_archived == 0 and todo.need_archive == 1 and todo.have_attachment == 1 %}
+                            <span class="badge bg-gradient-orange">
+                                <a style="color:#FFFFFF;" href="#" onclick="window.open('{% url 'tasks:todo_attachment' pk=todo.id %}', 'name','width=350, height=200, location=nosimply ')">档案已上传</a>
+{#                                <a style="color:#FFFFFF;" href="{% url 'tasks:todo_attachment' pk=todo.id %}">档案已上传</a>#}
+                            </span>
                           {% else %}
                             <span class="badge bg-gradient-gray">无需归档</span>
                           {% endif %}
 
                           {% if perms.tasks.change_archive %}
-                            <a href="{% url 'tasks:todo_detail' pk=todo.id %}">修改</a>
+                            <span  class="badge bg-gradient-orange"><a style="color:#FFFFFF;" href="{% url 'tasks:todo_detail' pk=todo.id %}">审核</a></span>
                           {% endif %}
                         </td>
                         <td style="text-align: center"><textarea style="overflow:hidden;width:100%;">{{ todo.complete_note }}</textarea></td>

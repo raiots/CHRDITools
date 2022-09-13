@@ -1,5 +1,6 @@
 import os
 import time
+import uuid
 
 from django.db import models
 from django.http import request
@@ -61,6 +62,7 @@ class Todo(models.Model):
         verbose_name_plural = '工作包'
         permissions = [
             ('change_archive', '可以修改归档状态'),
+            ('can_mark', '可以进行工作质量评价')
         ]
 
     # def save(self, *args, **kwargs):
@@ -102,6 +104,13 @@ class Todo(models.Model):
     def sub_workload(self):
         return self.predict_work * (1 - int(self.evaluate_factor)) / self.sub_executor.count
 
+    @property
+    def have_attachment(self):
+        if self.attachment_set.all().count() > 0:
+            return True
+        else:
+            return False
+
     @classmethod
     def sub_member(cls):
         return cls.sub_executor.count
@@ -121,6 +130,7 @@ def make_todo_attachment_path(instance, filename):
 
 class Attachment(models.Model):
     todo = models.ForeignKey(Todo, on_delete=models.CASCADE, verbose_name='工作包')
+    del_id = models.UUIDField('删除ID', default=uuid.uuid4, editable=False, unique=True)
     confidential_level = models.CharField(choices=(('内部', '内部'), ('非涉密', '非涉密')), max_length=10,
                                           verbose_name='密级')
     attachment = models.FileField('附件', upload_to=make_todo_attachment_path)

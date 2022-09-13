@@ -9,7 +9,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>任务管理工具</title>
+  <title>附件查看</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="{% static 'tasks/dist/css/googlefont.css' %}">
@@ -124,35 +124,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <div class="content-header">
-      <div class="container-xl">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0"> 附件查看 <small>{{ todo.todo_topic }}</small></h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">主页</a></li>
-              <li class="breadcrumb-item"><a href="">我的任务</a></li>
-              <li class="breadcrumb-item active">附件查看</li>
-            </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
+
     <!-- /.content-header -->
 
     <!-- Main content -->
 <div class="card">
-  <div class="card-header">
-    <h3 class="card-title">当前附件</h3>
-    <div class="card-tools">
-      <!-- Buttons, labels, and many other things can be placed here! -->
-      <!-- Here is a label for example -->
-      <span class="badge badge-primary">{{ todo.deadline }}</span>
-    </div>
-    <!-- /.card-tools -->
-  </div>
   <!-- /.card-header -->
 {#  <div class="card-body">#}
 {#    <ui>#}
@@ -161,19 +137,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
 {#        {% endfor %}#}
 {#    </ui>#}
 {#  </div>#}
-    <div class="card-body">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th style="width: 10px">#</th>
-                    <th>文件</th>
-                    <th style="width: 40px">密级</th>
-                </tr>
-            </thead>
+    <div class="card-body" style="background-color: #F4F6F9;">
+        <table  frame=void>
+{#            <thead>#}
+{#                <tr>#}
+{#                    <th style="width: 10px">#</th>#}
+{#                    <th>文件</th>#}
+{#                    <th style="width: 40px">密级</th>#}
+{#                </tr>#}
+{#            </thead>#}
             <tbody>
             {% for attachment in todo_attachment %}
                 <tr>
-                    <td>{{ forloop.counter }}</td>
+                    <td>{{ forloop.counter }}.</td>
                     <td><a href="/media/{{ attachment }}">{{ attachment.filename }}</a></td>
                     <td><span class="badge bg-blue">{{ attachment.confidential_level }}</span></td>
                 </tr>
@@ -182,9 +158,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
         </table>
     </div>
   <!-- /.card-body -->
-  <div class="card-footer">
+{#  <div class="card-footer">#}
 {#    请勿上传秘密级及以上信息！#}
-  </div>
+{#  </div>#}
   <!-- /.card-footer -->
 </div>
 <!-- /.card -->
@@ -202,15 +178,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
   </aside>
   <!-- /.control-sidebar -->
 {% endblock %}
-  <!-- Main Footer -->
-  <footer class="main-footer">
-    <!-- To the right -->
-    <div class="float-right d-none d-sm-inline">
-      CHRDI Task Manager <a href="{% url 'tasks:about' %}">ver 2.0 - Alpha</a>
-    </div>
-    <!-- Default to the left -->
-    <strong>Made with ❤ by <a href="{% url 'tasks:about' %}">Raiot</a>.</strong>
-  </footer>
 </div>
 <!-- ./wrapper -->
 

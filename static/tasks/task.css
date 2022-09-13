@@ -4,8 +4,10 @@
     BORDER-RIGHT: 0px solid;
     BORDER-TOP: 0px solid;
     /*width:100%;*/
-    overflow:hidden;
+    overflow: hidden;
+    /*resize: vertical;*/
     width:160px;
+    /*height: 50px;*/
     font-size: 0.5rem;
 }
 

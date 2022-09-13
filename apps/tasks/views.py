@@ -1,3 +1,4 @@
+import os
 import re
 from collections import defaultdict, Counter
 from copy import deepcopy
@@ -499,6 +500,25 @@ class TodoEntryView(View):
             # return redirect('tasks:todo_detail', pk=pk)
 
 
+class TodoAttachmentView(View):
+    def get(self, request, pk):
+        todo = Todo.objects.get(id=pk)
+        todo_attachment = Attachment.objects.filter(todo_id=pk)
+        context = {'todo_attachment': todo_attachment, 'todo': todo}
+        return render(request, 'tasks/todo_attachment.html', context)
+
+
 class AboutView(View):
     def get(self, request):
         return render(request, 'tasks/about.html')
+
+
+class AttachmentDeleteView(View):
+    def get(self, request, del_attachment_id):
+        attachment = Attachment.objects.get(del_id=del_attachment_id)
+        # print(attachment)
+
+        # 删除数据库的行与文件
+        attachment.delete()
+        os.remove(attachment.attachment.path)
+        return redirect('tasks:todo_detail', pk=attachment.todo_id)

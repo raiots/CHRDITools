@@ -37,6 +37,37 @@ def quarter_cate(value, year_quarter):
         return ''
 
 
+@register.filter(name='quarter_cate_return_object_id')
+def quarter_cate_return_object_id(value, year_quarter):
+    year_now = datetime.now().strftime('%Y')
+    month = value.deadline.strftime('%m')
+    year = value.deadline.strftime('%Y')
+    month = int(month)
+    # year = int(year)
+    # year_now = int(year) 不知道为什么，如果转整数会把2021和2022认为相同
+    # print(quarter)
+    req_year = str(year_quarter[1])
+    quarter = int(year_quarter[0])
+    # 可能造成性能损失，每次数据库会调出符合“当年”的任务或工作包的全部任务下工作包，并逐个判断
+    if year == req_year:
+        if quarter == 1 and 1 <= month <= 3:
+            return str(value.id)
+
+        elif quarter == 2 and 4 <= month <= 6:
+            return str(value.id)
+
+        elif quarter == 3 and 7 <= month <= 9:
+            return str(value.id)
+
+        elif quarter == 4 and 10 <= month <= 12:
+            return str(value.id)
+
+        else:
+            return ''
+    else:
+        return ''
+
+
 @register.filter(name='last_month')
 def last_month(value):
     curent_date = datetime.strptime(value, '%Y年%m月')
