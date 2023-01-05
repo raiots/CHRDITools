@@ -130,7 +130,7 @@ def make_todo_attachment_path(instance, filename):
 
 class Attachment(models.Model):
     todo = models.ForeignKey(Todo, on_delete=models.CASCADE, verbose_name='工作包')
-    del_id = models.UUIDField('删除ID', default=uuid.uuid4, editable=False, unique=True)
+    del_id = models.UUIDField('删除ID', default=uuid.uuid4, editable=False, unique=False)
     confidential_level = models.CharField(choices=(('内部', '内部'), ('非涉密', '非涉密')), max_length=10,
                                           verbose_name='密级')
     attachment = models.FileField('附件', upload_to=make_todo_attachment_path)

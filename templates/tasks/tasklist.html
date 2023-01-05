@@ -79,7 +79,7 @@
                         <th style="width: 100px; text-align:center; vertical-align: middle;">责任单位</th>
                         <th style="width: 100px; text-align:center; vertical-align: middle;">负责人</th>
                         <th style="width: 100px; text-align:center; vertical-align: middle;">主管领导</th>
-                        <th style="width: 240px; text-align:center; vertical-align: middle;">任务说明</th>
+{#                        <th style="width: 240px; text-align:center; vertical-align: middle;">任务说明</th>#}
 {#                        <th style="width: 40px">Label</th>#}
                       </tr>
                     </thead>
@@ -93,37 +93,63 @@
                         <td>{{ task.aim_value }}</td>
                         {% load taskfilter %}
                         <td style="background-color: #BFE7A8; padding: 0">
-                          <textarea class="text-none-border" style="background-color: #BFE7A8;">
+                          <div class="text-none-border" style="background-color: #BFE7A8;" contenteditable="false">
                               {% for todo in task.related_task.all %}
+                                  {% if todo|quarter_cate:year_quarter.1|length %}
                                   {{ todo|quarter_cate:year_quarter.1|safe }}
-                                  {{ todo|quarter_cate_return_object_id:year_quarter.1 }}
+                                      {% if todo.have_attachment %}
+                                      <a style="color:#FFFFFF;" href="#" onclick="window.open('/todo/{{ todo|quarter_cate_return_object_id:year_quarter.1 }}/attachment/', 'name','width=350, height=200, location=nosimply ')"><i style="color: #5D5D5D" class="fa fa-paperclip" aria-hidden="true"></i> </a>
+                                      {% endif %}
+                                  </br>
+                                  {% endif %}
                               {% endfor %}
-                          </textarea>
+                          </div>
                         </td>
                         <td style="background-color: #F5CCB0; padding: 0">
-                          <textarea class="text-none-border" style="background-color: #F5CCB0">{% for todo in task.related_task.all %}{{ todo|quarter_cate:year_quarter.2|safe }}{% endfor %}</textarea>
+                          <div class="text-none-border" style="background-color: #F5CCB0;" contenteditable="false">
+                              {% for todo in task.related_task.all %}
+                                  {% if todo|quarter_cate:year_quarter.2|length %}
+                                  {{ todo|quarter_cate:year_quarter.2|safe }}
+                                      {% if todo.have_attachment %}
+                                      <a style="color:#FFFFFF;" href="#" onclick="window.open('/todo/{{ todo|quarter_cate_return_object_id:year_quarter.2 }}/attachment/', 'name','width=350, height=200, location=nosimply ')"><i style="color: #5D5D5D" class="fa fa-paperclip" aria-hidden="true"></i> </a>
+                                      {% endif %}
+                                  </br>
+                                  {% endif %}
+                              {% endfor %}
+                          </div>
                         </td>
                         <td style="background-color: #F7E4A8; padding: 0">
                           <div class="text-none-border" style="background-color: #F7E4A8;" contenteditable="false">
                               {% for todo in task.related_task.all %}
+                                  {% if todo|quarter_cate:year_quarter.3|length %}
                                   {{ todo|quarter_cate:year_quarter.3|safe }}
-                                  {% if todo.have_attachment %}
 
-                                  <a style="color:#FFFFFF;" href="#" onclick="window.open('/todo/{{ todo|quarter_cate_return_object_id:year_quarter.3 }}/attachment/', 'name','width=350, height=200, location=nosimply ')"><i style="color: #5D5D5D" class="fa fa-paperclip" aria-hidden="true"></i> </a>
-                                  {% endif %}
+                                      {% if todo.have_attachment %}
+                                      <a style="color:#FFFFFF;" href="#" onclick="window.open('/todo/{{ todo|quarter_cate_return_object_id:year_quarter.3 }}/attachment/', 'name','width=350, height=200, location=nosimply ')"><i style="color: #5D5D5D" class="fa fa-paperclip" aria-hidden="true"></i> </a>
+                                      {% endif %}
                                   </br>
+                                  {% endif %}
                               {% endfor %}
                           </div>
 {#                          <textarea class="text-none-border" style="background-color: #F7E4A8;">{% for todo in task.related_task.all %}{{ todo|quarter_cate:year_quarter.3|safe }}<a href="{{ todo|quarter_cate_return_object_id:year_quarter.3 }}">a </a>{% endfor %}</textarea>#}
                         </td>
                         <td style="background-color: #83E1E3; padding: 0">
-                          <textarea class="text-none-border" style="background-color: #83E1E3">{% for todo in task.related_task.all %}{{ todo|quarter_cate:year_quarter.4|safe }}{% endfor %}</textarea>
-                        </td>
+                          <div class="text-none-border" style="background-color: #83E1E3;" contenteditable="false">
+                              {% for todo in task.related_task.all %}
+                                  {% if todo|quarter_cate:year_quarter.4|length %}
+                                  {{ todo|quarter_cate:year_quarter.4|safe }}
+                                      {% if todo.have_attachment %}
+                                      <a style="color:#FFFFFF;" href="#" onclick="window.open('/todo/{{ todo|quarter_cate_return_object_id:year_quarter.4 }}/attachment/', 'name','width=350, height=200, location=nosimply ')"><i style="color: #5D5D5D" class="fa fa-paperclip" aria-hidden="true"></i> </a>
+                                      {% endif %}
+                                  </br>
+                                  {% endif %}
+                              {% endfor %}
+                          </div>                        </td>
                         <td style="text-align:center;">{{ task.deadline | date:"Y.m" }}</td>
                         <td style="text-align:center;">{{ task.duty_group }}</td>
                         <td style="text-align:center;">{{ task.principal }}</td>
                         <td style="text-align:center;">{{ task.leader|default_if_none:"" }}</td>
-                        <td><textarea style="overflow:hidden;width:100%;">{{ task.task_note }}</textarea></td>
+{#                        <td><textarea style="overflow:hidden;width:100%;">{{ task.task_note }}</textarea></td>#}
                       </tr>
                     {% endfor %}
                     </tbody>
