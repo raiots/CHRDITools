@@ -400,7 +400,7 @@ class GroupTodoList(View):
 
         date = str(year) + '年' + str(month) + '月'
         current_path = request.get_full_path()
-        context = {'group_todo': group_todo, 'date': date, 'current_path':current_path}
+        context = {'group_todo': group_todo, 'date': date, 'current_path': current_path}
         return render(request, 'tasks/group_todolist.html', context)
 
 
@@ -443,38 +443,9 @@ class UserLogoutView(View):
         return redirect('tasks:index')
 
 
-# class FileUploadView(View):
-#     @method_decorator(login_required)
-#     def get(self, request):
-#         form = FileFieldForm()
-#         return render(request, 'tasks/file_upload.html', locals())
-#
-#     def post(self, request):
-#         form = FileFieldForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('tasks:index')
-#         return render(request, 'tasks/file_upload.html', locals())
-#
-#     @method_decorator(login_required)
-#     def post(self, request):
-#         file = request.FILES.get('file')
-#         if file:
-#             file_name = file.name
-#             file_path = os.path.join(settings.MEDIA_ROOT, file_name)
-#             with open(file_path, 'wb') as f:
-#                 for chunk in file.chunks():
-#                     f.write(chunk)
-#             messages.success(request, '文件上传成功')
-#             return redirect('tasks:file_upload')
-#         else:
-#             messages.error(request, '文件上传失败')
-#             return redirect('tasks:file_upload')
-
 class FileUploadView(FormView):
     template_name = 'tasks/file_upload.html'
     form_class = FileFieldForm
-
 
     def form_valid(self, form):
         todo_id = self.request.GET.get("todo_id")

@@ -102,9 +102,9 @@
                                 <a style="color:#FFFFFF;" href="{% url 'tasks:todo_attachment' pk=todo.id %}">已归档</a>_
                                 <i class="fa fa-paperclip" aria-hidden="true"></i>
                             </span>
-                          {% elif todo.is_archived == 0 and todo.need_archive == 1 and todo.have_attachment == 0 %}
+                          {% elif todo.is_archived == False and todo.need_archive == True and todo.have_attachment == False %}
                             <span class="badge bg-gradient-red">未归档</span>
-                          {% elif todo.is_archived == 0 and todo.need_archive == 1 and todo.have_attachment == 1 %}
+                          {% elif todo.is_archived == False and todo.need_archive == True and todo.have_attachment == True %}
                             <span class="badge bg-gradient-orange">
                                 <a style="color:#FFFFFF;" href="{% url 'tasks:todo_attachment' pk=todo.id %}">档案已上传</a>
                             </span>
@@ -144,7 +144,6 @@
                         <th style="width: 320px; text-align:center; vertical-align: middle;">完成情况</th>
                         <th style="width: 120px; text-align:center; vertical-align: middle;">完成质量</th>
                         <th style="text-align:center; vertical-align: middle;"></th>
-{#                        <th style="width: 40px">Label</th>#}
                       </tr>
                     </thead>
                     <tbody>

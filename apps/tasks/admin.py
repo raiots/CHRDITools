@@ -1,9 +1,11 @@
-from datetime import datetime
+import logging
+from datetime import datetime, timedelta
 import re
 
 from django.contrib import admin
 from django.http import JsonResponse
 from django.utils.html import format_html
+from django import forms
 from import_export.admin import ImportExportModelAdmin
 from import_export.formats import base_formats
 
@@ -127,9 +129,18 @@ class TaskAdmin(ImportExportModelAdmin):
             return False
 
 
-# class TodoAdmin(admin.ModelAdmin):
+class PeriodTodoCheck(forms.ModelForm):
+    YEAR_CHOICES = []
+    for r in range(datetime.now().year, (datetime.now().year + 3)):
+        YEAR_CHOICES.append((r, r))
+    is_period_todo = forms.BooleanField(label='使用此模板创建周期任务', required=False, initial=False)
+    period_type = forms.ChoiceField(label='周期类型', choices=[('weekly', '每周'), ('monthly', '每月'), ('quarterly', '每季度'), ('yearly', '每年')], required=False)
+    action_year = forms.ChoiceField(label='执行年份', choices=YEAR_CHOICES, required=False, initial=YEAR_CHOICES[0][0])
+
+
 class TodoAdmin(ImportExportModelAdmin):
     resource_class = TodoResources
+    form = PeriodTodoCheck
 
     # 工作包页面仅显示所属本部门的年度任务、承办人、协办人
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -162,7 +173,7 @@ class TodoAdmin(ImportExportModelAdmin):
         }),
 
         (None, {
-            'fields': [],
+            'fields': ['is_period_todo', 'period_type', 'action_year'],
         }),
     ]
     list_display = (
@@ -236,6 +247,56 @@ class TodoAdmin(ImportExportModelAdmin):
                                                         .order_by('task_id')
         form.base_fields['related_task'].queryset = query.distinct()
         return form
+
+    def save_model(self, request, obj, form, change):
+        obj.pub_user = request.user
+        super().save_model(request, obj, form, change)
+
+        # 若选中了群发邮件，则自动发送邮件
+        if form.cleaned_data['is_period_todo'] is True:
+            if form.cleaned_data['period_type'] == 'weekly':
+                current_deadline = obj.deadline + timedelta(days=7)
+                while current_deadline.year == int(form.cleaned_data['action_year']):
+                    new_todo = obj
+                    new_todo.pk = None
+                    new_todo.deadline = current_deadline
+                    new_todo.save()
+                    current_deadline = current_deadline + timedelta(days=7)
+
+            elif form.cleaned_data['period_type'] == 'monthly':
+                current_deadline = obj.deadline + timedelta(days=30)
+                while current_deadline.year == int(form.cleaned_data['action_year']):
+                    new_todo = obj
+                    new_todo.pk = None
+                    new_todo.deadline = current_deadline
+                    new_todo.save()
+                    current_deadline = current_deadline + timedelta(days=30)
+
+            elif form.cleaned_data['period_type'] == 'quarterly':
+                current_deadline = obj.deadline + timedelta(days=90)
+                while current_deadline.year == int(form.cleaned_data['action_year']):
+                    # print("current_deadline: ", current_deadline)
+                    new_todo = obj
+                    new_todo.pk = None
+                    new_todo.deadline = current_deadline
+                    new_todo.save()
+                    current_deadline = current_deadline + timedelta(days=90)
+
+            elif form.cleaned_data['period_type'] == 'yearly':
+                # 用于将工作包复制到指定年份
+                if form.cleaned_data['action_year'] != form.cleaned_data['deadline'].year:
+                    # create another using selected year
+                    new_todo = obj
+                    new_todo.pk = None  # 重置主键以此复制对象
+                    current_deadline = new_todo.deadline
+                    new_todo.deadline = datetime(int(form.cleaned_data['action_year']), current_deadline.month, current_deadline.day)
+                    new_todo.save()
+            else:
+                logging.warning("period_type is not correct")
+
+
+        else:
+            pass
 
     # def save_model(self, request, obj, form, change):
     #     # 这一行代码写了一个晚上呜呜！ 解决了当保存时，无法从未保存的数据中获取协办人数的问题！
