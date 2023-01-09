@@ -55,7 +55,7 @@
 {#                          </div>#}
 {#                    </div>#}
 {#                  </div>#}
-                  <table class="table" style="word-break: break-all">
+                  <table class="table" style="word-break: break-all; font-size: 14px">
                     <thead>
                       <br>
                       <h3 style="text-align: center; letter-spacing: 30px">我的承办</h3>
@@ -90,11 +90,13 @@
                         <td style="text-align:center;">{{ todo.predict_work }}</td>
                         <td style="text-align:center;">{{ todo.evaluate_factor }}</td>
                         <td style="text-align:center;">{{ todo.real_work|default:'' }}</td>
-                        <td >
+                        <td style="text-align: center">
+                          <span>{{ todo.maturity }}</span>
                           <div class="progress progress-xs">
                             <div class="progress-bar progress-bar-danger" style="width: {{ todo.maturity }}"></div>
                           </div>
-                          <span class="badge bg-gradient-blue">{{ todo.maturity }}</span>
+{#                          TODO: 90%黄色 100%绿色#}
+
                         </td>
                         <td>
                           {% if todo.is_archived == 1 %}
@@ -159,11 +161,11 @@
                         <td style="text-align:center;">{{ todo.predict_work }}</td>
                         <td style="text-align:center;">{{ todo.evaluate_factor }}</td>
                         <td style="text-align:center;">{{ todo.real_work|default:'' }}</td>
-                        <td >
+                        <td style="text-align:center">
+                          <span>{{ todo.maturity }}</span>
                           <div class="progress progress-xs">
                             <div class="progress-bar progress-bar-danger" style="width: {{ todo.maturity }}"></div>
                           </div>
-                          <span class="badge bg-gradient-blue">{{ todo.maturity }}</span>
                         </td>
                         <td>
                           {% if todo.is_archived == 1 %}
