@@ -136,7 +136,11 @@ class IndexView(View):
 
         # 若total_credit为空，不进行以下操作，避免err
         if total_credit:
-            current_user = total_credit[request.user.username]
+            try:
+                current_user = total_credit[request.user.username]
+            except KeyError:
+                # 解决当前用户在本月没有工作包时的 KeyError 报错
+                current_user = []
 
             # 累加该部门各个用户的工作量，计算部门工作量
             department_cal = {}
