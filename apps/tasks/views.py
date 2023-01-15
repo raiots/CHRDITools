@@ -454,7 +454,7 @@ class FileUploadView(FormView):
     def form_valid(self, form):
         todo_id = self.request.GET.get("todo_id")
         print(todo_id)
-        self.success_url = '/todo/' + todo_id
+        self.success_url = '/upload/?todo_id=' + todo_id
         for each in form.cleaned_data['attachments']:
             Attachment.objects.create(attachment=each, todo_id=todo_id,
                                       confidential_level=form.cleaned_data['confidential_level'])
@@ -462,6 +462,7 @@ class FileUploadView(FormView):
 
 
 class TodoEntryView(View):
+    # TODO 分两个界面，一个是从我的里进入一个从部门里进入
     def get(self, request, pk):
         todo_detail = Todo.objects.get(id=pk)
         todo_attachment = Attachment.objects.filter(todo_id=pk)
