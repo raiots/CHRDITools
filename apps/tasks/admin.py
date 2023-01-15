@@ -2,6 +2,7 @@ import logging
 from datetime import datetime, timedelta
 import re
 
+from dateutil.relativedelta import relativedelta
 from django.contrib import admin
 from django.http import JsonResponse
 from django.utils.html import format_html
@@ -30,6 +31,7 @@ class TodoInline(admin.StackedInline):
         return super().formfield_for_manytomany(db_field, request, **kwargs)
     model = models.Todo
     extra = 0
+    show_change_link = True
     # classes = ['collapse']
 #TODO 选择年度任务时排序 https://www.codenong.com/40740869/
 
@@ -133,8 +135,8 @@ class PeriodTodoCheck(forms.ModelForm):
     YEAR_CHOICES = []
     for r in range(datetime.now().year, (datetime.now().year + 3)):
         YEAR_CHOICES.append((r, r))
-    is_period_todo = forms.BooleanField(label='使用此模板创建周期任务', required=False, initial=False)
-    period_type = forms.ChoiceField(label='周期类型', choices=[('weekly', '每周'), ('monthly', '每月'), ('quarterly', '每季度'), ('yearly', '每年')], required=False)
+    is_period_todo = forms.BooleanField(label='使用此模板创建周期任务', required=False, initial=False, help_text="<a href='/static/docs/guide/task_admin.html#%E5%A4%8D%E5%88%B6%E5%B7%A5%E4%BD%9C%E5%8C%85%E5%88%B0%E6%8C%87%E5%AE%9A%E5%B9%B4%E5%BA%A6'>如果您对此选项不熟悉，请点此以查看文档</a>")
+    period_type = forms.ChoiceField(label='周期类型', choices=[('weekly', '每周'), ('monthly', '每月'), ('quarterly', '每季度'), ('yearly', '复制到该年')], required=False)
     action_year = forms.ChoiceField(label='执行年份', choices=YEAR_CHOICES, required=False, initial=YEAR_CHOICES[0][0])
 
 
@@ -172,7 +174,7 @@ class TodoAdmin(ImportExportModelAdmin):
             'description': ''
         }),
 
-        (None, {
+        ('周期任务', {
             'fields': ['is_period_todo', 'period_type', 'action_year'],
         }),
     ]
@@ -264,23 +266,23 @@ class TodoAdmin(ImportExportModelAdmin):
                     current_deadline = current_deadline + timedelta(days=7)
 
             elif form.cleaned_data['period_type'] == 'monthly':
-                current_deadline = obj.deadline + timedelta(days=30)
+                current_deadline = obj.deadline + relativedelta(months=1)
                 while current_deadline.year == int(form.cleaned_data['action_year']):
                     new_todo = obj
                     new_todo.pk = None
                     new_todo.deadline = current_deadline
                     new_todo.save()
-                    current_deadline = current_deadline + timedelta(days=30)
+                    current_deadline = current_deadline + relativedelta(months=1)
 
             elif form.cleaned_data['period_type'] == 'quarterly':
-                current_deadline = obj.deadline + timedelta(days=90)
+                current_deadline = obj.deadline + relativedelta(months=3)
                 while current_deadline.year == int(form.cleaned_data['action_year']):
                     # print("current_deadline: ", current_deadline)
                     new_todo = obj
                     new_todo.pk = None
                     new_todo.deadline = current_deadline
                     new_todo.save()
-                    current_deadline = current_deadline + timedelta(days=90)
+                    current_deadline = current_deadline + relativedelta(months=3)
 
             elif form.cleaned_data['period_type'] == 'yearly':
                 # 用于将工作包复制到指定年份
