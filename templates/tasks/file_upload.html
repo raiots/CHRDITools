@@ -1,5 +1,29 @@
-{% extends 'tasks/base.html' %}
+{% load static %}
 
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html lang="zh-hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>任务管理工具</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="{% static 'tasks/dist/css/googlefont.css' %}">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="{% static 'tasks/plugins/fontawesome-free/css/all.min.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'tasks/dist/css/adminlte.css' %}">
+  <!-- My style -->
+  <link rel="stylesheet" href="{% static 'tasks/task.css' %}">
+
+  {% block style %}
+    <!--css样式-->
+  {% endblock %}
+</head>
 
 {% block main_content %}
 <section class="content">
@@ -35,10 +59,10 @@
 {#                                    </div>#}
                                 </div>
                             </div>
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                <label class="form-check-label" for="exampleCheck1">承诺上传文件与密级对应正确</label>
-                            </div>
+{#                            <div class="form-check">#}
+{#                                <input type="checkbox" class="form-check-input" id="exampleCheck1">#}
+{#                                <label class="form-check-label" for="exampleCheck1">承诺上传文件与密级对应正确</label>#}
+{#                            </div>#}
                         </div>
 
                         <div class="card-footer">
