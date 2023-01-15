@@ -500,7 +500,7 @@
     "@vuepress/utils" "2.0.0-beta.60"
     execa "^6.1.0"
 
-"@vuepress/plugin-medium-zoom@2.0.0-beta.60":
+"@vuepress/plugin-medium-zoom@2.0.0-beta.60", "@vuepress/plugin-medium-zoom@^2.0.0-beta.60":
   version "2.0.0-beta.60"
   resolved "https://registry.yarnpkg.com/@vuepress/plugin-medium-zoom/-/plugin-medium-zoom-2.0.0-beta.60.tgz#2ffca0d31e2ef9a73443bd9f2aacbfbb466ab969"
   integrity sha512-KiJui/sTIHa321jJ/dc11ysyqTMj4Sz9tWoTSnwBJ4nebaO/0OFGQcFajk2+1ELs4poUh/w0THxc+NskR+bf+g==
@@ -538,6 +538,19 @@
   dependencies:
     "@vuepress/core" "2.0.0-beta.60"
     prismjs "^1.29.0"
+
+"@vuepress/plugin-search@^2.0.0-beta.60":
+  version "2.0.0-beta.60"
+  resolved "https://registry.yarnpkg.com/@vuepress/plugin-search/-/plugin-search-2.0.0-beta.60.tgz#e253e00bb8070093baa5f7f400df75c1c484b7b4"
+  integrity sha512-9ENqni4H35/L6vab5DpQfy92DcKPL+36xxoOj1EqZfjU/IlIOFKz4TK8JwhaX+reswokF8NriPFcWol4xIa5IA==
+  dependencies:
+    "@vuepress/client" "2.0.0-beta.60"
+    "@vuepress/core" "2.0.0-beta.60"
+    "@vuepress/shared" "2.0.0-beta.60"
+    "@vuepress/utils" "2.0.0-beta.60"
+    chokidar "^3.5.3"
+    vue "^3.2.45"
+    vue-router "^4.1.6"
 
 "@vuepress/plugin-theme-data@2.0.0-beta.60":
   version "2.0.0-beta.60"
