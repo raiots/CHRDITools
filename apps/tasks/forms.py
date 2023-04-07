@@ -1,5 +1,6 @@
 from django import forms
 from .models import Todo
+from apps.users.models import User
 from multiupload.fields import MultiFileField, MultiMediaField, MultiImageField
 
 
@@ -36,6 +37,7 @@ class TodoForm(forms.ModelForm):
         super(TodoForm, self).__init__(*args, **kwargs)
         # self.fields['sub_executor'].widget.attrs['class'] = 'form-control'
         fields = ['maturity', 'real_work', 'sub_executor', 'evaluate_factor', 'complete_note', 'is_archived']
+        self.fields['sub_executor'].queryset = User.objects.filter(department=self.instance.main_executor.department)  # 按照承办人所属部门过滤协办人
         for i in fields:
             self.fields[i].widget.attrs['class'] = 'form-control'
 
