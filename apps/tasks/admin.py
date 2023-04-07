@@ -29,11 +29,14 @@ class TodoInline(admin.StackedInline):
         if db_field.name == 'sub_executor':
             kwargs["queryset"] = User.objects.filter(department=request.user.department)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
+
     model = models.Todo
     extra = 0
     show_change_link = True
     # classes = ['collapse']
-#TODO 选择年度任务时排序 https://www.codenong.com/40740869/
+
+
+# TODO 选择年度任务时排序 https://www.codenong.com/40740869/
 
 class AttachmentInline(admin.TabularInline):
     model = models.Attachment
@@ -41,14 +44,19 @@ class AttachmentInline(admin.TabularInline):
     classes = ['expand']
     readonly_fields = ['upload_time']
     fields = ['attachment', 'confidential_level', 'upload_time']
+
     def file_name(self, obj):
         return obj.file.name
+
     def file_size(self, obj):
         return obj.file.size
+
     def file_type(self, obj):
         return obj.file.content_type
+
     def file_url(self, obj):
         return format_html('<a href="{}">{}</a>', obj.file.url, obj.file.name)
+
     file_url.short_description = '附件'
     file_url.allow_tags = True
     file_url.admin_order_field = 'file'
@@ -97,7 +105,6 @@ class TaskAdmin(ImportExportModelAdmin):
 
         super().save_model(request, obj, form, change)
 
-
     list_display = (
         'task_property', 'task_id', 'task_topic', 'task_origin', 'aim_value', 'deadline', 'duty_group', 'principal',
         'leader', 'task_note',
@@ -114,6 +121,7 @@ class TaskAdmin(ImportExportModelAdmin):
     inlines = [TodoInline]
     raw_id_fields = ("principal", "leader",)
     list_display_links = ('task_topic',)
+
     # autocomplete_fields = ('related_task',)
     # search_fields = ('related_task',)
 
@@ -135,8 +143,11 @@ class PeriodTodoCheck(forms.ModelForm):
     YEAR_CHOICES = []
     for r in range(datetime.now().year, (datetime.now().year + 3)):
         YEAR_CHOICES.append((r, r))
-    is_period_todo = forms.BooleanField(label='使用此模板创建周期任务', required=False, initial=False, help_text="<a href='/static/docs/guide/task_admin.html#%E5%A4%8D%E5%88%B6%E5%B7%A5%E4%BD%9C%E5%8C%85%E5%88%B0%E6%8C%87%E5%AE%9A%E5%B9%B4%E5%BA%A6'>如果您对此选项不熟悉，请点此以查看文档</a>")
-    period_type = forms.ChoiceField(label='周期类型', choices=[('weekly', '每周'), ('monthly', '每月'), ('quarterly', '每季度'), ('yearly', '复制到该年')], required=False)
+    is_period_todo = forms.BooleanField(label='使用此模板创建周期任务', required=False, initial=False,
+                                        help_text="<a href='/static/docs/guide/task_admin.html#%E5%A4%8D%E5%88%B6%E5%B7%A5%E4%BD%9C%E5%8C%85%E5%88%B0%E6%8C%87%E5%AE%9A%E5%B9%B4%E5%BA%A6'>如果您对此选项不熟悉，请点此以查看文档</a>")
+    period_type = forms.ChoiceField(label='周期类型',
+                                    choices=[('weekly', '每周'), ('monthly', '每月'), ('quarterly', '每季度'),
+                                             ('yearly', '复制到该年')], required=False)
     action_year = forms.ChoiceField(label='执行年份', choices=YEAR_CHOICES, required=False, initial=YEAR_CHOICES[0][0])
 
 
@@ -168,7 +179,8 @@ class TodoAdmin(ImportExportModelAdmin):
     fieldsets = [
         (None, {
             'fields': [
-                'related_task', 'todo_topic', 'todo_note', 'need_archive', 'deadline', 'duty_group', 'main_executor', 'sub_executor',
+                'related_task', 'todo_topic', 'todo_note', 'need_archive', 'deadline', 'duty_group', 'main_executor',
+                'sub_executor',
                 'sub_executor_count', 'predict_work', 'evaluate_factor', 'real_work'
             ],
             'description': ''
@@ -198,12 +210,12 @@ class TodoAdmin(ImportExportModelAdmin):
     )
     list_editable = ['quality_mark']
     list_filter = ('deadline',)
-    list_display_links = ('todo_topic', 'deadline', )
+    list_display_links = ('todo_topic', 'deadline',)
     date_hierarchy = 'deadline'
     list_per_page = 70  # 目的是取消自动分页，好像有bug
     # raw_id_fields = ("sub_executor",)
     search_fields = ('todo_topic',)
-    ordering = ('related_task', )
+    ordering = ('related_task',)
     inlines = [AttachmentInline]
 
     def approval_state(self, obj):
@@ -211,19 +223,23 @@ class TodoAdmin(ImportExportModelAdmin):
 
     def task_id(self, obj):
         return obj.task_id
+
     task_id.admin_order_field = 'related_task__task_id'
     task_id.short_description = '任务编号'
 
     def task_origin(self, obj):
         return obj.task_origin
+
     task_origin.short_description = '任务来源'
 
     def duty_department(self, obj):
         return obj.duty_group
+
     duty_department.short_description = '责任部门'
 
     def lined_task(self, obj):
         return obj.related_task
+
     lined_task.short_description = '任务名称'
 
     # 导入导出功能限制
@@ -243,10 +259,10 @@ class TodoAdmin(ImportExportModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super(TodoAdmin, self).get_form(request, obj, **kwargs)
         query = models.Task.objects.filter(
-            department=request.user.department, deadline__year__gte=datetime.now().strftime('%Y')).order_by('task_id')\
-                                                    | models.Task.objects.filter(
-            department=request.user.department, related_task__deadline__year__gte=datetime.now().strftime('%Y'))\
-                                                        .order_by('task_id')
+            department=request.user.department, deadline__year__gte=datetime.now().strftime('%Y')).order_by('task_id') \
+                | models.Task.objects.filter(
+            department=request.user.department, related_task__deadline__year__gte=datetime.now().strftime('%Y')) \
+                    .order_by('task_id')
         form.base_fields['related_task'].queryset = query.distinct()
         return form
 
@@ -254,8 +270,8 @@ class TodoAdmin(ImportExportModelAdmin):
         obj.pub_user = request.user
         super().save_model(request, obj, form, change)
 
-        # 若选中了群发邮件，则自动发送邮件
-        if form.cleaned_data['is_period_todo'] is True:
+        # 若选中了周期任务，则批量创建任务
+        if 'is_period_todo' in form.cleaned_data and form.cleaned_data['is_period_todo'] is True:
             if form.cleaned_data['period_type'] == 'weekly':
                 current_deadline = obj.deadline + timedelta(days=7)
                 while current_deadline.year == int(form.cleaned_data['action_year']):
@@ -291,7 +307,8 @@ class TodoAdmin(ImportExportModelAdmin):
                     new_todo = obj
                     new_todo.pk = None  # 重置主键以此复制对象
                     current_deadline = new_todo.deadline
-                    new_todo.deadline = datetime(int(form.cleaned_data['action_year']), current_deadline.month, current_deadline.day)
+                    new_todo.deadline = datetime(int(form.cleaned_data['action_year']), current_deadline.month,
+                                                 current_deadline.day)
                     new_todo.save()
             else:
                 logging.warning("period_type is not correct")
@@ -303,14 +320,14 @@ class TodoAdmin(ImportExportModelAdmin):
     # def save_model(self, request, obj, form, change):
     #     # 这一行代码写了一个晚上呜呜！ 解决了当保存时，无法从未保存的数据中获取协办人数的问题！
     #     mvDict = dict(request.POST)
-        # dicts = request.POST
-        # print(dicts)
-        # for key, values in dicts:
-        #     print(key, values)
-        # obj.user = request.user
+    # dicts = request.POST
+    # print(dicts)
+    # for key, values in dicts:
+    #     print(key, values)
+    # obj.user = request.user
 
-        # obj.sub_executor_count = int(len(mvDict['sub_executor']))
-        # super().save_model(request, obj, form, change)
+    # obj.sub_executor_count = int(len(mvDict['sub_executor']))
+    # super().save_model(request, obj, form, change)
 
     # 增加批量操作按钮
     actions = ['bulk_action']
